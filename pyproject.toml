@@ -7,5 +7,7 @@ requires-python = ">=3.13"
 dependencies = [
     "django>=5.2.3",
     "djangorestframework>=3.16.0",
+    "dotenv>=0.9.9",
     "psycopg2>=2.9.10",
+    "pycryptodome>=3.23.0",
 ]

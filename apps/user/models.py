@@ -1,5 +1,8 @@
+from datetime import timedelta
+
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db import models
+from django.utils import timezone
 
 
 class UserManager(BaseUserManager):
@@ -46,6 +49,24 @@ class User(AbstractUser):
     REQUIRED_FIELDS = []
 
     objects = UserManager()
+
+    def access_token_expiry(self):
+
+        return timezone.now() + timedelta(minutes=5)
+
+    def refresh_token_expiry(self, remember_me=False):
+        from datetime import timedelta
+
+        return timezone.now() + timedelta(days=30 if remember_me else 1)
+
+    @property
+    def json(self):
+        """
+        Returns a JSON representation of the user.
+        """
+        from .serializers import UserSerializer
+
+        return UserSerializer(self).data
 
     def __str__(self):
         return self.email
