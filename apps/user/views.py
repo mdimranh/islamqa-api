@@ -1,23 +1,13 @@
 from django.shortcuts import render
-from rest_framework.generics import ListAPIView
+from rest_framework.generics import ListCreateAPIView
 from rest_framework.permissions import IsAuthenticated
+
+from core.restapi.views.crud import CrudAPIView
 
 from .models import User
 from .serializers import UserSerializer
 
 
-class UserListView(ListAPIView):
-    """
-    View to list all users.
-    """
-
-    permission_classes = (IsAuthenticated,)
-
+class UserCRUDView(CrudAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-
-    def get(self, request, *args, **kwargs):
-        """
-        Handle GET requests to list users.
-        """
-        return super().get(request, *args, **kwargs)

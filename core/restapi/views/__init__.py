@@ -9,13 +9,13 @@ from dotenv import load_dotenv
 from rest_framework import serializers
 from rest_framework.response import Response
 
-from ..exceptions import RestException, ValidationError
+from ..exceptions import ExceptionHandlerMixin, RestException, ValidationError
 from .request import Request
 
 load_dotenv(override=True)
 
 
-class ApiView(View):
+class ApiView(ExceptionHandlerMixin, View):
     """
     Base class for all API views.
     Provides common functionality such as authentication, permission checks,
@@ -122,8 +122,8 @@ class ApiView(View):
         return True
 
     def http_method_not_allowed(self, *args, **kwargs):
-        response = DictResponse(
-            message=f"{self.request.method} method is not allowed.", status=403
+        response = Response(
+            {"details": f"{self.request.method} method is not allowed."}, status=403
         )
 
         if self.view_is_async:
@@ -157,7 +157,7 @@ class ApiView(View):
     def dispatch(self, request, *args, **kwargs):
         try:
             self.request = request
-            self._check_apikey()
+            # self._check_apikey()
             self.request.data = Request(self.request).data
             if not self.method_is_allowed(request.method):
                 return self.http_method_not_allowed()

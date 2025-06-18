@@ -1,5 +1,6 @@
 from django.core.exceptions import ValidationError as DjValidationError
-from rest_framework.response import Response
+
+from core.restapi.response import DictResponse
 
 
 class RestException(Exception):
@@ -37,3 +38,40 @@ class NotFound(RestException):
 class RequiredField(RestException):
     status_code = 422
     default_message = "This field is required."
+
+
+class ExceptionHandlerMixin:
+    def validation_errors_to_dict(self, errors):
+        try:
+            error_dict = {}
+            if isinstance(errors, ValidationError):
+                errors = [errors]
+
+            for error in errors:
+                key, value = error
+                error_dict[key] = value
+
+            return error_dict
+        except:
+            return {}
+
+    def handle_exception(self, exception):
+        if isinstance(exception, ValidationError):
+            return DictResponse(
+                message=exception.get("message"),
+                validation_error=exception.get("field"),
+                status=exception.status_code,
+            )
+        elif isinstance(exception, RestException):
+            return DictResponse(
+                message=exception.message,
+                data=exception.data,
+                status=exception.status_code,
+            )
+        elif isinstance(exception, DjValidationError):
+            return DictResponse(
+                # **{"message": exception.message},
+                validation_error=self.validation_errors_to_dict(exception),
+            )
+        else:
+            raise exception

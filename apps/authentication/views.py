@@ -6,7 +6,7 @@ from apps.authentication.models import Session
 from .serializers import LoginSerializer
 
 
-class AuthenticationView(APIView):
+class LoginView(APIView):
     """
     Base view for authentication-related endpoints.
     """
@@ -22,6 +22,75 @@ class AuthenticationView(APIView):
         if serializer.is_valid():
             user = serializer.get_user()
             if user and user.check_password(serializer.validated_data["password"]):
-                return serializer.login()
+                return self.login(request, serializer.validated_data)
             return Response({"message": "Invalid email or password."}, status=400)
         return Response(serializer.errors, status=400)
+
+    def get_user(self, data):
+        """
+        Returns the user instance if the credentials are valid.
+        """
+
+        email = data.get("email")
+        password = data.get("password")
+        fid = data.get("fid", "")
+
+        return User.objects.filter(email=email, is_active=True).first()
+
+    def login(self, request, data):
+        """
+        Logs in the user and creates a session.
+        """
+        user = self.get_user(data)
+        if not user or not user.check_password(data["password"]):
+            return Response({"message": "Invalid email or password."}, status=400)
+
+        session, created = Session.objects.get_or_create(
+            user=user,
+            fid=self.data.get("fid", ""),
+            defaults={
+                "accessToken": aes.encrypt(
+                    {
+                        "type": "access",
+                        "user": user.json,
+                        "fid": data.get("fid", ""),
+                        "exp": user.access_token_expiry(),
+                    }
+                ),
+                "refreashToken": aes.encrypt(
+                    {
+                        "type": "refresh",
+                        "user_id": user.id,
+                        "fid": data.get("fid", ""),
+                        "exp": user.refresh_token_expiry(
+                            remember_me=data.get("remember_me", False)
+                        ),
+                    }
+                ),
+                "ip": request.META.get("REMOTE_ADDR"),
+                "userAgent": request.META.get("HTTP_USER_AGENT", ""),
+                "expiresAt": user.access_token_expiry(),
+                "refreshTokenExpiresAt": user.refresh_token_expiry(
+                    remember_me=data.get("remember_me", False)
+                ),
+            },
+        )
+
+        response = Response()
+        response.set_cookie(
+            key="accessToken",
+            value=session.accessToken,
+            httponly=True,
+            secure=True,
+            samesite="Lax",
+            expires=session.expiresAt,
+        )
+        response.set_cookie(
+            key="refreshToken",
+            value=session.refreashToken,
+            httponly=True,
+            secure=True,
+            samesite="Lax",
+            expires=session.refreshTokenExpiresAt,
+        )
+        return response

@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "rest_framework",
     "apps.user",
     "apps.authentication",
 ]
@@ -137,3 +138,6 @@ REST_FRAMEWORK = {
         "core.jwt.authentication.AccessTokenAuthentication",
     )
 }
+
+
+SILENCED_SYSTEM_CHECKS = []
