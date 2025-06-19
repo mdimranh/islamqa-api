@@ -55,8 +55,9 @@ class DictResponse(HttpResponse):
 
     def _data(self):
         self.data_dict = {
-            "message": self.message,
-            "body": {"data": self.data, "field": self.validation_error},
+            "message": self.message or "Success",
+            "data": self.data,
+            "error": self.validation_error,
         }
 
     def set_value(self, key, value):

@@ -5,9 +5,9 @@ from rest_framework.permissions import IsAuthenticated
 from core.restapi.views.crud import CrudAPIView
 
 from .models import User
-from .serializers import UserSerializer
+from .serializers import UserSerializer, UserDetailsSerializer
 
 
 class UserCRUDView(CrudAPIView):
     queryset = User.objects.all()
-    serializer_class = UserSerializer
+    serializer_class = UserDetailsSerializer

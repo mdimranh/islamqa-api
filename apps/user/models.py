@@ -1,7 +1,9 @@
-from datetime import timedelta
-
+# model
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db import models
+
+# utils
+from datetime import timedelta
 from django.utils import timezone
 
 

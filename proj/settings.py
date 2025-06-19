@@ -11,6 +11,10 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -37,6 +41,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "anymail",
     "rest_framework",
     "apps.user",
     "apps.authentication",
@@ -84,7 +89,7 @@ DATABASES = {
         "ENGINE": "django.db.backends.postgresql",
         "NAME": "iqa",
         "USER": "postgres",
-        "PASSWORD": "postgres",
+        "PASSWORD": "admin",
         "HOST": "localhost",
         "PORT": "5432",
     }
@@ -139,5 +144,11 @@ REST_FRAMEWORK = {
     )
 }
 
+EMAIL_BACKEND = "anymail.backends.brevo.EmailBackend"
+ANYMAIL = {
+    "BREVO_API_KEY": os.getenv("BREVO_API_KEY"),
+    "IGNORE_UNSUPPORTED_FEATURES": True,
+}
+BREVO_API_URL = "https://api.brevo.com/v3/"
 
-SILENCED_SYSTEM_CHECKS = []
+SILENCED_SYSTEM_CHECKS = ["urls.W002"]
