@@ -66,9 +66,9 @@ class User(AbstractUser):
         """
         Returns a JSON representation of the user.
         """
-        from .serializers import UserSerializer
+        from .serializers import UserDetailsSerializer
 
-        return UserSerializer(self).data
+        return UserDetailsSerializer(self).data
 
     def __str__(self):
         return self.email

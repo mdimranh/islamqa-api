@@ -1,22 +1,13 @@
 from anymail.message import AnymailMessage
+from apps.events.base import BaseEvent
 
-
-class userCreateEvent:
-    def __init__(self, type, data):
-        self.type = type
-        self.data = data
-
-    def trigger(self):
-        if self.type == "created":
-            self.send_email()
-
-    def send_email(self):
-        print("Sending mail -----------------------")
+class userCreateEvent(BaseEvent):
+    def action_email(self):
         message = AnymailMessage(
             subject="Welcome tou islamic-qa.",
-            from_email="mdimran.cdda@gmail.com",
+            from_email="Islam QA <mdimran.cdda@gmail.com>",
             body="Welcome to our site. You otp code is 1234",
-            to=[f"no-reply <{self.data.email}>"],
+            to=[f"no-reply <{self.payload.get('email')}>"],
             tags=["Onboarding"],
         )
         message.metadata = {"onboarding_experiment": "variation 1"}
@@ -25,3 +16,6 @@ class userCreateEvent:
 
         status = message.anymail_status
         print("Mid ------------------------> ", status.message_id)
+
+    def action_notification(self):
+        print("notification send ------------------------>", self.payload)

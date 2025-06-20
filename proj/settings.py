@@ -45,6 +45,8 @@ INSTALLED_APPS = [
     "rest_framework",
     "apps.user",
     "apps.authentication",
+    "apps.events",
+    'background_task',
 ]
 
 AUTH_USER_MODEL = "user.User"
