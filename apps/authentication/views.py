@@ -1,12 +1,15 @@
 from rest_framework.response import Response
-from rest_framework.views import APIView
+from core.restapi.views import ApiView
+from core.restapi.response import DictResponse
+from core.utils.aes import aes
 
+from .models import User
 from apps.authentication.models import Session
 
 from .serializers import LoginSerializer
 
 
-class LoginView(APIView):
+class LoginView(ApiView):
     """
     Base view for authentication-related endpoints.
     """
@@ -20,11 +23,11 @@ class LoginView(APIView):
         serializer = LoginSerializer(data=data, context={"request": request})
 
         if serializer.is_valid():
-            user = serializer.get_user()
+            user = self.get_user(data)
             if user and user.check_password(serializer.validated_data["password"]):
                 return self.login(request, serializer.validated_data)
-            return Response({"message": "Invalid email or password."}, status=400)
-        return Response(serializer.errors, status=400)
+            return DictResponse(message="Invalid email or password.", status=400)
+        return DictResponse(validation_error=serializer.errors, status=400)
 
     def get_user(self, data):
         """
@@ -43,11 +46,11 @@ class LoginView(APIView):
         """
         user = self.get_user(data)
         if not user or not user.check_password(data["password"]):
-            return Response({"message": "Invalid email or password."}, status=400)
+            return DictResponse(message="Invalid email or password.", status=400)
 
         session, created = Session.objects.get_or_create(
             user=user,
-            fid=self.data.get("fid", ""),
+            fid=data.get("fid", ""),
             defaults={
                 "accessToken": aes.encrypt(
                     {
@@ -76,21 +79,21 @@ class LoginView(APIView):
             },
         )
 
-        response = Response()
+        response = DictResponse()
         response.set_cookie(
             key="accessToken",
             value=session.accessToken,
             httponly=True,
-            secure=True,
-            samesite="Lax",
+            samesite="None",
+            secure=False,
             expires=session.expiresAt,
         )
         response.set_cookie(
             key="refreshToken",
             value=session.refreashToken,
             httponly=True,
-            secure=True,
-            samesite="Lax",
+            samesite="None",
+            secure=False,
             expires=session.refreshTokenExpiresAt,
         )
         return response

@@ -84,6 +84,19 @@ wheels = [
 ]
 
 [[package]]
+name = "django-cors-headers"
+version = "4.7.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "asgiref" },
+    { name = "django" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/93/6c/16f6cb6064c63074fd5b2bd494eb319afd846236d9c1a6c765946df2c289/django_cors_headers-4.7.0.tar.gz", hash = "sha256:6fdf31bf9c6d6448ba09ef57157db2268d515d94fc5c89a0a1028e1fc03ee52b", size = 21037, upload-time = "2025-02-06T22:15:28.924Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/7e/a2/7bcfff86314bd9dd698180e31ba00604001606efb518a06cca6833a54285/django_cors_headers-4.7.0-py3-none-any.whl", hash = "sha256:f1c125dcd58479fe7a67fe2499c16ee38b81b397463cf025f0e2c42937421070", size = 12794, upload-time = "2025-02-06T22:15:24.341Z" },
+]
+
+[[package]]
 name = "djangorestframework"
 version = "3.16.0"
 source = { registry = "https://pypi.org/simple" }
@@ -123,6 +136,7 @@ dependencies = [
     { name = "django" },
     { name = "django-anymail" },
     { name = "django-background-tasks" },
+    { name = "django-cors-headers" },
     { name = "djangorestframework" },
     { name = "dotenv" },
     { name = "psycopg2" },
@@ -134,6 +148,7 @@ requires-dist = [
     { name = "django", specifier = ">=5.2.3" },
     { name = "django-anymail", extras = ["brevo"], specifier = ">=13.0" },
     { name = "django-background-tasks", specifier = ">=1.2.8" },
+    { name = "django-cors-headers", specifier = ">=4.7.0" },
     { name = "djangorestframework", specifier = ">=3.16.0" },
     { name = "dotenv", specifier = ">=0.9.9" },
     { name = "psycopg2", specifier = ">=2.9.10" },

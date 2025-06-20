@@ -1,15 +1,17 @@
 from anymail.message import AnymailMessage
 from apps.events.base import BaseEvent
+from django.template.loader import render_to_string
 
 class userCreateEvent(BaseEvent):
     def action_email(self):
+        body = render_to_string("email/verify_email.html", self.payload)
         message = AnymailMessage(
             subject="Welcome tou islamic-qa.",
             from_email="Islam QA <mdimran.cdda@gmail.com>",
-            body="Welcome to our site. You otp code is 1234",
             to=[f"no-reply <{self.payload.get('email')}>"],
             tags=["Onboarding"],
         )
+        message.attach_alternative(body, "text/html")
         message.metadata = {"onboarding_experiment": "variation 1"}
         message.track_clicks = True
         message.send()

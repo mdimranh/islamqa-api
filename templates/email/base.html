@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>{{ subject }}</title>
+  </head>
+  <body
+    style="
+      margin: 0;
+      padding: 25px;
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      background-color: #f9fafb;
+      color: #111827;
+    "
+  >
+    <table width="100%" cellpadding="0" cellspacing="0" role="presentation">
+      <tr>
+        <td align="center" style="padding: 40px 0">
+          <table
+            width="600"
+            cellpadding="0"
+            cellspacing="0"
+            style="
+              background-color: white;
+              border-radius: 8px;
+              overflow: hidden;
+              box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+            "
+          >
+            <!-- Header -->
+            <tr>
+              <td
+                style="
+                  background-color: #1d4ed8;
+                  padding: 20px;
+                  text-align: center;
+                "
+              >
+                <img
+                  style="width: 70px; height: 70px"
+                  src="https://images.seeklogo.com/logo-png/40/1/qa-logo-png_seeklogo-408799.png"
+                  alt="IslamQA"
+                  srcset=""
+                />
+              </td>
+            </tr>
+
+            <!-- Content -->
+            <tr>
+              <td style="padding: 40px 30px">
+                {% block content %} {% endblock %}
+              </td>
+            </tr>
+
+            <!-- Footer -->
+            <tr>
+              <td
+                style="
+                  background-color: #f3f4f6;
+                  padding: 20px;
+                  text-align: center;
+                  font-size: 12px;
+                  color: #6b7280;
+                "
+              >
+                &copy; {{ current_year }} IslamQA. All rights reserved.
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>

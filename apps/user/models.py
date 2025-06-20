@@ -3,8 +3,10 @@ from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db import models
 
 # utils
+from django.core.exceptions import ValidationError
 from datetime import timedelta
 from django.utils import timezone
+import re
 
 
 class UserManager(BaseUserManager):
@@ -32,13 +34,33 @@ class UserManager(BaseUserManager):
         return self.create_user(email, password, **extra_fields)
 
 
+def validate_strong_password(value):
+    """
+    Validates that the password contains at least one uppercase letter,
+    one lowercase letter, one number, one special character, and is at least 8 characters long.
+    """
+    if len(value) < 8:
+        raise ValidationError("Password must be at least 8 characters long.")
+    if not re.search(r'[A-Z]', value):
+        raise ValidationError("Password must contain at least one uppercase letter.")
+    if not re.search(r'[a-z]', value):
+        raise ValidationError("Password must contain at least one lowercase letter.")
+    if not re.search(r'\d', value):
+        raise ValidationError("Password must contain at least one digit.")
+    if not re.search(r'[!@#$%^&*(),.?":{}|<>]', value):
+        raise ValidationError("Password must contain at least one special character.")
+
 class User(AbstractUser):
     """
     Custom user model that uses email as the unique identifier instead of username.
     This model inherits from AbstractUser, which provides the default fields and methods
     for a user in Django, but overrides the username field to use email instead.
     """
-
+    password = models.CharField(
+        max_length=128,
+        validators=[validate_strong_password],
+        help_text="Password must be at least 8 characters long and contain an uppercase letter, a lowercase letter, a number, and a special character.",
+    )
     username = None  # Disable the username field
     email = models.EmailField(
         unique=True,
