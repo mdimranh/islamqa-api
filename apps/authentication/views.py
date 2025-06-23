@@ -77,6 +77,28 @@ class LoginView(ApiView):
                 ),
             },
         )
+        if not created:
+            session.accessToken = aes.encrypt({
+                "type": "access",
+                "user": user.json,
+                "fid": data.get("fid", ""),
+                "exp": user.access_token_expiry(),
+            })
+            session.refreashToken = aes.encrypt({
+                "type": "refresh",
+                "user_id": user.id,
+                "fid": data.get("fid", ""),
+                "exp": user.refresh_token_expiry(
+                    remember_me=data.get("remember_me", False)
+                ),
+            })
+            session.ip = request.META.get("REMOTE_ADDR")
+            session.userAgent = request.META.get("HTTP_USER_AGENT", "")
+            session.expiresAt = user.access_token_expiry()
+            session.refreshTokenExpiresAt = user.refresh_token_expiry(
+                remember_me=data.get("remember_me", False)
+            )
+            session.save()
 
         response = DictResponse()
         response.set_cookie(
@@ -85,7 +107,7 @@ class LoginView(ApiView):
             httponly=False,
             samesite="None",
             secure=True,
-            # max_age=user.access_token_expiry(),
+            expires=user.access_token_expiry(),
         )
         response.set_cookie(
             key="refreshToken",
@@ -93,6 +115,6 @@ class LoginView(ApiView):
             httponly=False,
             samesite="None",
             secure=True,
-            # max_age=user.refresh_token_expiry(remember_me=data.get("remember_me", False)),
+            expires=user.refresh_token_expiry(remember_me=data.get("remember_me", False)),
         )
         return response
