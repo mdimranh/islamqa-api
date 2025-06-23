@@ -82,17 +82,17 @@ class LoginView(ApiView):
         response.set_cookie(
             key="accessToken",
             value=session.accessToken,
-            httponly=True,
+            httponly=False,
             samesite="None",
             secure=True,
-            max_age=user.access_token_expiry(),
+            # max_age=user.access_token_expiry(),
         )
         response.set_cookie(
             key="refreshToken",
             value=session.refreashToken,
-            httponly=True,
+            httponly=False,
             samesite="None",
             secure=True,
-            max_age=user.refresh_token_expiry(remember_me=data.get("remember_me", False)),
+            # max_age=user.refresh_token_expiry(remember_me=data.get("remember_me", False)),
         )
         return response

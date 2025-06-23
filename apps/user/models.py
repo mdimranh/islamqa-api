@@ -75,10 +75,10 @@ class User(AbstractUser):
     objects = UserManager()
 
     def access_token_expiry(self):
-        return 5 * 60
+        return timezone.now() + timedelta(minutes=5)
 
     def refresh_token_expiry(self, remember_me=False):
-        return 30 * 24 * 60 * 60 if remember_me else 7 * 24 * 60 * 60
+        return timezone.now() + timedelta(days=1)
 
     @property
     def json(self):
