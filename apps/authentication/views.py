@@ -1,4 +1,3 @@
-from rest_framework.response import Response
 from core.restapi.views import ApiView
 from core.restapi.response import DictResponse
 from core.utils.aes import aes

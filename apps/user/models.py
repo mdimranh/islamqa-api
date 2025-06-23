@@ -78,8 +78,6 @@ class User(AbstractUser):
         return 5 * 60
 
     def refresh_token_expiry(self, remember_me=False):
-        from datetime import timedelta
-
         return 30 * 24 * 60 * 60 if remember_me else 7 * 24 * 60 * 60
 
     @property
