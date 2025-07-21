@@ -86,10 +86,15 @@ class AccessTokenAuthentication(authentication.BaseAuthentication):
 
         session.accessToken = new_access_token
         session.expiresAt = timezone.now() + timedelta(minutes=5)
+        session.refreashTokenExpiresAt = session.user.refresh_token_expiry(
+            remember_me=session.remember_me
+        )
         session.save()
 
         request.COOKIES["nat"] = new_access_token
         request.COOKIES["nex"] = session.expiresAt
+        request.COOKIES["nrt"] = session.refreashToken
+        request.COOKIES["nrex"] = session.refreashTokenExpiresAt
 
         return session.user, session
 
@@ -113,13 +118,23 @@ class TokenCookieMiddleware:
 
     def __call__(self, request):
         response = self.get_response(request)
+        print("cookies ---------> ", request.COOKIES)
         if "nat" in request.COOKIES:
             response.set_cookie(
                 key="accessToken",
                 value=request.COOKIES["nat"],
-                httponly=True,
+                httponly=False,
                 secure=True,
-                samesite="Lax",
+                samesite="None",
                 expires=request.COOKIES["nex"],
+            )
+        if "nrt" in request.COOKIES:
+            response.set_cookie(
+                key="refreshToken",
+                value= request.COOKIES["nrt"],
+                httponly=False,
+                samesite="None",
+                secure=True,
+                expires= request.COOKIES["nrex"],
             )
         return response

@@ -15,4 +15,9 @@ class UserCRUDView(CrudAPIView):
     queryset = User.objects.all()
     serializer_class = UserDetailsSerializer
     serializer_class_for_post = UserCreateSerializer
+
+    def details(self, request, *args, **kwargs):
+        user = self.get_object()
+        serializer = self.serializer_class(user)
+        return Response(serializer.data)
     

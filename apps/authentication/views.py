@@ -1,6 +1,7 @@
 from core.restapi.views import ApiView
 from core.restapi.response import DictResponse
 from core.utils.aes import aes
+from django.utils import timezone
 
 from .models import User
 from apps.authentication.models import Session
@@ -75,6 +76,7 @@ class LoginView(ApiView):
                 "refreshTokenExpiresAt": user.refresh_token_expiry(
                     remember_me=data.get("remember_me", False)
                 ),
+                "remember_me": data.get("remember_me", False),
             },
         )
         if not created:

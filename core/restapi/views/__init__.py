@@ -122,8 +122,9 @@ class ApiView(ExceptionHandlerMixin, View):
         return True
 
     def http_method_not_allowed(self, *args, **kwargs):
-        response = Response(
-            {"details": f"{self.request.method} method is not allowed."}, status=403
+        response = DictResponse(
+            {"message": "Method not allowed."},
+            status=405,
         )
 
         if self.view_is_async:

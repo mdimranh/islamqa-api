@@ -68,6 +68,7 @@ class User(AbstractUser):
             "unique": "A user with that email already exists.",
         },
     )
+    is_scholar = models.BooleanField(default=False, help_text="Designates whether the user is a scholar.")
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []

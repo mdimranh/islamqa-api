@@ -22,6 +22,7 @@ class Session(models.Model):
     refreshTokenExpiresAt = models.DateTimeField()
     isLoggedIn = models.BooleanField(default=True)
     logoutTime = models.DateTimeField(null=True, blank=True)
+    remember_me = models.BooleanField(default=False)
 
     def __str__(self) -> str:
         return f"ip : {self.ip} for userAgent : {self.userAgent}"
